@@ -56,7 +56,7 @@ class Grafo:
 
     #armazenar arvore para ser plotada
     def bfs_com_arvore(self, raiz):
-        print("Busca em Largura:")
+        
         fila = [raiz]
         visitados_bfs = [False] * self.num_vertices
         arvore_bfs = {v: [] for v in range(self.num_vertices)}
@@ -114,11 +114,11 @@ class Grafo:
         bipartido = all(self.cor[u] != self.cor[v] for u in range(self.num_vertices) for v in range(self.num_vertices) if self.matriz_adjacencia[u][v] == 1)
 
         if bipartido:
-            print("O grafo é bipartido")
+            print("\nO grafo é bipartido")
             self.mostrar_biparticao()
             
         else:
-            print("O grafo não é bipartido.")
+            print("\nO grafo não é bipartido.")
             ciclo_impar = self.encontrar_ciclo_impar(0)
             if ciclo_impar:
                 print(f"O grafo possui um ciclo ímpar: {ciclo_impar[0]} e {ciclo_impar[1]}")
@@ -152,14 +152,14 @@ class Grafo:
                 candidatos = [v for v in candidatos if v != raiz and not visitados_bfs[v]]
                 print(f"Candidatos restantes: {candidatos}")
                 if not candidatos:
-                    print(f"O grafo não é mais bipartido a partir do vértice {v}")
+                    print(f"\nO grafo não é mais bipartido a partir do vértice {v}\n")
                     break
 
 
     #mostrar a bipartição
     def mostrar_biparticao(self):
         if self.verificar_conexo():
-            print("O grafo é conexo.")
+            print("\nO grafo é conexo.\n")
             print("Bipartição:")
             for i in range(self.num_vertices):
                 print(f"Vértice {i}: Grupo {'A' if self.cor[i] else 'B'}")
@@ -317,32 +317,37 @@ if __name__ == "__main__":
         if not grafo.visitado[v]:
             grafo.bfs(v)
     
-    opcao = input("Digite a Opção Desejada:\n1 Verificar se o grafo é conexo\n2 Aplicar Busca em Largura\n3 Encontrar Bipartição\n")
+    while True:
+        print("==============================================")
+        print("Opções:")
+        print("1 - Verificar se o grafo é conexo")
+        print("2 - Aplicar Busca em Largura")
+        print("3 - Encontrar Bipartição")
+        print("0 - Sair do programa")
 
-    if opcao == '1':
-        if grafo.verificar_conexo():
-            print("O grafo é conexo.")
-            for i, componente in enumerate(grafo.componentes_conexas):
-                print(f"Componente Conexa {i + 1}: {componente}")
-                 # Visualizar o grafo
+        opcao = input("Digite a Opção Desejada: ")
+
+        if opcao == '0':
+            print("Programa Encerrado!")
+            break
+        elif opcao == '1':
+            if grafo.verificar_conexo():
+                print("O grafo é conexo.")
+                for i, componente in enumerate(grafo.componentes_conexas):
+                    print(f"Componente Conexa {i + 1}: {componente}")
+                    grafo.visualizar_grafo()
+            else:
+                print("O grafo não é conexo.")
                 grafo.visualizar_grafo()
-        else:
-            print("O grafo não é conexo.")
-             # vizualizar grafo
+        elif opcao == '2':
+            candidatos_raiz = [v for v in range(grafo.num_vertices) if not grafo.visitado[v]]
+            print(f"Vértices disponíveis para escolha do vértice raiz: {candidatos_raiz}\n")
+            raiz_bfs = int(input("Qual será o vértice raiz da busca? \n"))
+            arvore_bfs = grafo.bfs_com_arvore(raiz_bfs)
+            grafo.visualizar_arvore_bfs(raiz_bfs, arvore_bfs)
+            grafo.encontrar_biparticao_com_arvore(raiz_bfs)
+        elif opcao == '3':
+            grafo.encontrar_biparticao()
             grafo.visualizar_grafo()
-
-    elif opcao == '2':
-        candidatos_raiz = [v for v in range(grafo.num_vertices) if not grafo.visitado[v]]
-        print(f"Vértices disponíveis para escolha do vértice raiz: {candidatos_raiz}")
-        raiz_bfs = int(input("Qual será o vértice raiz da busca? "))
-        arvore_bfs = grafo.bfs_com_arvore(raiz_bfs)
-        grafo.visualizar_arvore_bfs(raiz_bfs, arvore_bfs)
-        grafo.encontrar_biparticao_com_arvore(raiz_bfs)
-
-    elif opcao == '3':
-        grafo.encontrar_biparticao()
-        # Visualizar o grafo
-        grafo.visualizar_grafo()
-
-    else:
-        print("Opção inválida.")
+        else:
+            print("Opção inválida. Tente novamente.")
